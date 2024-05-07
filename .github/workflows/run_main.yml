@@ -1,4 +1,4 @@
-name: run Player_Updater.py
+name: run main.py
 
 on:
   schedule:
