@@ -3,22 +3,13 @@ import gspread
 import time
 import datetime
 import pytz
+import os
+import json
 
 start_time = time.time()
 
-CREDS = {
-  "type": "service_account",
-  "project_id": "mlb-the-show-422202",
-  "private_key_id": "8a9641dc74f0efdec3a973454abfc2bc57f30f07",
-  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQC4ql22EfHE/kR2\nBJgoXs3nfGtw2S87hAY4lMX39aX37SbTXVbdhnNq+RPWDOVm4VtmsMKoZy3Wg7of\nL1cG34EznMbGEGP+2wOqH8DX/T8cu/eVkNvou3/91aExnr3Ynw76yYoDpTEKKmci\nCJLRsE78hNqnu8U3arDunBu6uUCatoALQ1dHYho2KzA8yyeyVfnTBnmFDjPiTS9F\nKzl7ONtB4wxmbi4FTNHYcBuRVYtyQIxjlBykO/7vGYIRP4o0ZidEzjXVeFShtsmP\niNzWC4uHjhE3ZBkbAVS5QkezI05Ef34TcO4hrT2XB9rQr9zhf38II6Oo3K7n2b5J\ns6ezJKLzAgMBAAECggEAIRSDzQXR5ZQW931DNJgnEny7Um/VgjfYVXJxNEYRASS+\ne8aQtQZMzrDn2MReo9ti4DZx6HDzSSY3xTZZxKVtI63F/d0ZzKG3OlaN2SNIlwEl\nDOnyOvK7ruECCz2AjLmRmWNZEeYZrtSBvRsEEgQfYiT6dmmwnojCQTw9y2k8JXqV\nTuz60kFk5xOc3UW3rEu72wDWdHuAe4+CAZKKIRxr4Qi4sZCsaxVMHzmTQYfnQLxv\nL1l+j/4eVc8e/q5TPu6o+iO3WnO5gzhT36YxK7R4c2M0SVFxBBHYAQsknyuskhn3\nyoznPBDMoPhyH9Eh4QiidZIvmA4waDS5TYQ/66N0wQKBgQD3lDQ2h1fzO4D78ckG\npDGZV3yRV+5euA5D3HqcWepiTsMWZzIOLN22RWRx2RThALt8W17XHj9XfXHyWRpm\n/kIMQjFOBuZeoClJALXM772/X7dQ7ITTgVZQVmYJh3bT92xeZXWJ6EthPtO06c5u\nhdJV1R+vyjZrcq1hwPOZ6MKryQKBgQC+8le/KgLYCCxXr7Hc+i5RKKlc2iHnrUFT\n4PVwer3sDXQBopL0losJVVd+NwGWG0NMTtgTVm956kCe21q83wz+S92BXBD1ayPO\ntdr7RgoFjTMgqaVkW2piFo8Dl+lHJkrRbduadLF69wN/TMYBiyiBa8idjqB/J0Ii\nZQrF1Xk+2wKBgQCucF3ZjcMKPgLDgbiCVW4c/OdoAOyTEFv8tHwvbasXWSdbwZoj\nIrmUk5ASJ0HuxvVSyY4pQ8adfmWqu90+dCdVO85Bi9sFERQFu9pcaw7mqCoheoSc\nAaUvNbDvReMTtmFEoXgPkvyJqBrCfXpVpTRuBZwt3+w4CLThC3KYHsgLAQKBgQCt\ndlpgPzn2JvahceqSZHRPJjE1OLQ0UyBVordVRyvhlRcdpSL7Lwd/oxeogS/fvUSV\nvcptRsheaH/r0DnN+pNDMIg5S/nb+Ui+MFaOjkHsaSlZMsQdNy6djQC+svIowJCX\nUMV+uyPAIUX8DzKRlGlnqRLGjxseZ/ucY042CofqoQKBgQC1ND9ezsJcapo0Hy+I\nNNEvxj/exy/9zs5MUzoiNqzt5z7dz9ff1n3tLRS+rc3yXjAwyy/2B2GERVGCBgfI\nhGkgOLJtdLKFs623zal348acetIprFELt8W15iU8+LjctwgYRL3DgqUwa4hiL4lC\nzOG5iVl6k9/XjTB2qDC91QZotg==\n-----END PRIVATE KEY-----\n",
-  "client_email": "mlb-the-show-bot@mlb-the-show-422202.iam.gserviceaccount.com",
-  "client_id": "107878503647520206684",
-  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-  "token_uri": "https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/mlb-the-show-bot%40mlb-the-show-422202.iam.gserviceaccount.com",
-  "universe_domain": "googleapis.com"
-}
+creds_json = os.environ['CREDS']
+CREDS = json.loads(creds_json)
 
 gc = gspread.service_account_from_dict(CREDS)
 
