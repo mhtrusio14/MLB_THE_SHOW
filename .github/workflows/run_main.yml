@@ -2,7 +2,7 @@ name: run main.py
 
 on:
   schedule:
-    - cron: '*/5 * * * *' #runs every 5 mins  
+    - cron: '*/30 * * * *' #runs every 30 mins  
 jobs:
   build:
     runs-on: ubuntu-latest
