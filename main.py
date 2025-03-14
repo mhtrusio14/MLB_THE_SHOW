@@ -13,11 +13,11 @@ CREDS = json.loads(creds_json)
 
 gc = gspread.service_account_from_dict(CREDS)
 
-sh = gc.open("MLB The Show Helper")
+sh = gc.open("MLB The Show 25 Helper")
 
 worksheet = sh.worksheet("Players")
 
-base_url = 'https://mlb24.theshow.com/apis/listings.json'
+base_url = 'https://mlb25.theshow.com/apis/listings.json'
 
 counter = 1
 row_counter = 2
