@@ -2,7 +2,7 @@ name: run get_current_day_irl_stats.yml
 
 on:
   schedule:
-    - cron: '0 2 * * *' #runs every day at 2am
+    - cron: '0 6 * * *' #runs every day at 2am EST
 jobs:
   build:
     runs-on: ubuntu-latest
