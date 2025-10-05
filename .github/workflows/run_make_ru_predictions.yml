@@ -2,7 +2,7 @@ name: run make_ru_predictions.yml
 
 on:
   schedule:
-    - cron: '0 9 * * *' #runs at 5am EST
+    - cron: '0 9 * * *' #runs every day at 5am EST
 jobs:
   build:
     runs-on: ubuntu-latest
