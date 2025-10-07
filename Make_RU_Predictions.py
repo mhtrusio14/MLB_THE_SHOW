@@ -6,6 +6,7 @@ import pytz
 from unidecode import unidecode
 import re
 import json
+import os
 
 def remove_middle_initials(name):
   parts = name.split()
