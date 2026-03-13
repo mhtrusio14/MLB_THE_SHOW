@@ -2,7 +2,7 @@ name: run get_players_and_prices.yml
 
 on:
   schedule:
-    - cron: '0/10 * * * *' #runs every 10 mins
+    - cron: '0/5  * * * *'
 jobs:
   build:
     runs-on: ubuntu-latest
