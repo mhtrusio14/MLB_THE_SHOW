@@ -19,7 +19,7 @@ sh = gc.open("Roster Update Prediction Bot")
 
 worksheet = sh.worksheet("Players_Prices")
 
-base_url = 'https://mlb26.theshow.com/apis/listings.json'
+base_url = 'https://mlb26.theshow.com/apis/listings.json' # replace with 2025 endpoint
 
 counter = 1
 row_counter = 2
