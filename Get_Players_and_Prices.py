@@ -31,7 +31,9 @@ while True:
     url = f"{base_url}?page={counter}"
     print(url)
     api_call = requests.get(url)
+    print(f"[DEBUG] Response status code: {api_call.status_code}")
     api_json = api_call.json()
+        
     
     if counter == int(api_json['total_pages']) + 1:
         break
