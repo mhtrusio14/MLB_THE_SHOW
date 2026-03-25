@@ -27,6 +27,8 @@ row_counter = 2
 update_counter = 0
 cards_info = []
 
+print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ NEW CODE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+
 user_agents = [
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Safari/605.1.15", #5 for 5 on testing
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:110.0) Gecko/20100101 Firefox/110.0", # 5 for 5 on testing
