@@ -60,19 +60,50 @@ headers = {
 
 session = requests.Session()
 
+def robust_api_get(url, max_retries=5, backoff_factor=1.5):
+    """
+    Makes a GET request with retries and exponential backoff for 403/429 errors.
+    Randomizes User-Agent for each request.
+    """
+    for attempt in range(1, max_retries + 1):
+        # Randomize User-Agent for each request
+        headers["User-Agent"] = random.choice(user_agents)
+        try:
+            resp = session.get(url, headers=headers, timeout=20)
+            if resp.status_code == 403 or resp.status_code == 429:
+                print(f"[WARN] {resp.status_code} error on {url} (attempt {attempt})")
+                print(f"Response: {resp.text[:500]}")
+                if attempt == max_retries:
+                    resp.raise_for_status()
+                sleep_time = backoff_factor * (2 ** (attempt - 1)) + random.uniform(0, 1)
+                print(f"Sleeping {sleep_time:.2f}s before retry...")
+                time.sleep(sleep_time)
+                continue
+            resp.raise_for_status()
+            return resp
+        except requests.RequestException as e:
+            print(f"[ERROR] Request failed: {e} (attempt {attempt})")
+            if attempt == max_retries:
+                raise
+            sleep_time = backoff_factor * (2 ** (attempt - 1)) + random.uniform(0, 1)
+            print(f"Sleeping {sleep_time:.2f}s before retry...")
+            time.sleep(sleep_time)
+    raise Exception(f"Failed to GET {url} after {max_retries} attempts.")
+
 while True:
-    # print(counter)
     url = f"{base_url}?page={counter}"
     print(url)
-    api_call = session.get(url)
-    print(f"[DEBUG] Response status code: {api_call.status_code}")
-    api_json = api_call.json()
-        
-    
+    api_call = robust_api_get(url)
+    try:
+        api_json = api_call.json()
+    except Exception as e:
+        print(f"[ERROR] Failed to parse JSON for {url}: {e}")
+        print(f"Response text: {api_call.text[:500]}")
+        raise
+
     if counter == int(api_json['total_pages']) + 1:
         break
-    
-    # print(api_json['listings'])
+
     for listing in api_json['listings']:
         if listing['item']['series'] == "Live":
             cards_info.append({
@@ -88,9 +119,8 @@ while True:
                 'SELL_PRICE': listing['best_sell_price'],
                 'IMG_URL': listing['item']['baked_img']
             })
-        # print(cards_info)
-        # time.sleep(1)  # Sleep for 1 second between API calls to avoid rate limits
-            
+        # time.sleep(1)  # Uncomment if you want to slow down requests
+
     counter += 1
 
 print("Getting Espn IDs Now")
@@ -104,10 +134,6 @@ espn_players = {unidecode(player["displayName"]): player["id"] for player in esp
 
 def sanitize_name(name):
     return re.sub(r'[\.-]|Jr\.?', '', name).strip()
-
-# print(cards_info[0])
-# time.sleep(10)
-
 
 # Append ESPN_ID to each player dict in cards_info
 for player in cards_info:
