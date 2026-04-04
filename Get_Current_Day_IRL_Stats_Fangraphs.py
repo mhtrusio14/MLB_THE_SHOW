@@ -1,12 +1,15 @@
 import requests
-import json
 import gspread
 import time
 import datetime
 import pytz
-import os
-from datetime import datetime
+from unidecode import unidecode
+import re
+import json
 from bs4 import BeautifulSoup
+from unidecode import unidecode
+from dateutil import parser
+import random
 
 start_time = time.time()
 
