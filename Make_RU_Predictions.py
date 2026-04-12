@@ -672,6 +672,8 @@ print("Calculating True Overall Changes now")
 counter = 2
 
 for player in predicted_players:
+  # print(player)
+  # time.sleep(100)
   if player['Original_Name'] == "Shohei Ohtani":
     player['In_Game_Position'] = "DH"
     
@@ -748,77 +750,132 @@ for player in predicted_players:
   # print(player_before_stats)
   # print(player_after_stats)
   
-  user_agents = [
-      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Safari/605.1.15",
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:110.0) Gecko/20100101 Firefox/110.0",
-      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15",
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/120.0.0.0",
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:115.0) Gecko/20100101 Firefox/115.0",
-      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Safari/605.1.15",
-      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Safari/605.1.15",
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:110.0) Gecko/20100101 Firefox/110.0",
-      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15",
-      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Safari/605.1.15",
-      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.2 Safari/601.7.7",
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:115.0) Gecko/20100101 Firefox/115.0",
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0",
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/119.0.0.0",
-      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Edge/118.0.0.0",
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/117.0.0.0"
-  ]
-  headers = {
-      "User-Agent": random.choice(user_agents),
-      "Accept": "application/json, text/javascript, */*; q=0.01",
-      "Accept-Language": "en-US,en;q=0.9",
-      "Referer": "https://showzone.gg/",
-      "Connection": "keep-alive",
-      "Sec-Fetch-Dest": "empty",
-      "Sec-Fetch-Mode": "cors",
-      "Sec-Fetch-Site": "same-origin"
-  }
-  session = requests.Session()
-  max_retries = 5
-  for attempt in range(1, max_retries + 1):
-    try:
-      response1 = session.post('https://data.showzone.gg/api/true-overall/calculate', json=player_before_stats, headers=headers)
-      if response1.status_code == 502:
-        print(f"502 Bad Gateway for player {player.get('Original_Name', 'Unknown')} (before stats), attempt {attempt}/{max_retries}")
-        if attempt < max_retries:
+  if player.get('In_Game_Position') == 'SP':
+    # print('SP')
+    # print("Pitching Clutch:", player.get('Pitching Clutch'))
+    # print("Pitching Clutch Change Avg:", player.get('Pitching Clutch Change Avg', 0))
+    # print("H9 V L:", player.get('H9 V L'))
+    # print("H/9 v L Change Avg:", player.get('H/9 v L Change Avg', 0))
+    # print("H9 V R:", player.get('H9 V R'))
+    # print("H/9 v R Change Avg:", player.get('H/9 v R Change Avg', 0))
+    # print("K9 V L:", player.get('K9 V L'))
+    # print("K/9 v L Change Avg:", player.get('K/9 v L Change Avg', 0))
+    # print("K9 V R:", player.get('K9 V R'))
+    # print("K/9 v R Change Avg:", player.get('K/9 v R Change Avg', 0))
+    # print("BB Per 9:", player.get('BB Per 9'))
+    # print("BB/9 Change Avg:", player.get('BB/9 Change Avg', 0))
+    # print("Stamina:", player.get('Stamina'))
+    # print("Stamina Change Avg:", player.get('Stamina Change Avg', 0))
+
+    old_true_overall = (int(player.get('Pitching Clutch')) / 17) + (int(player.get('H9 V L')) / 7.5) + (int(player.get('H9 V R')) / 7.5) + (int(player.get('K9 V L')) / 7) + (int(player.get('K9 V R')) / 7) + (int(player.get('BB Per 9')) / 4) + (int(player.get('Stamina')) / 12)
+    new_true_overall = ((int(player.get('Pitching Clutch')) + int(player.get('Pitching Clutch Change Avg', 0))) / 17) + ((int(player.get('H9 V L')) + int(player.get('H/9 v L Change Avg', 0))) / 7.5) + ((int(player.get('H9 V R')) + int(player.get('H/9 v R Change Avg', 0))) / 7.5) + ((int(player.get('K9 V L')) + int(player.get('K/9 v L Change Avg', 0))) / 7) + ((int(player.get('K9 V R')) + int(player.get('K/9 v R Change Avg', 0))) / 7) + ((int(player.get('BB Per 9')) + int(player.get('BB/9 Change Avg', 0))) / 4) + ((int(player.get('Stamina')) + int(player.get('Stamina Change Avg', 0))) / 12)
+    print(f"Old True Overall: {old_true_overall}, New True Overall: {new_true_overall}")
+    
+    overall_change_float = (new_true_overall - old_true_overall) * 0.9
+    # print(overall_change_float)
+    overall_change_final = round(overall_change_float, 2)
+    # print(overall_change_final)
+    # time.sleep(1000)
+    
+  elif player.get('In_Game_Position') == 'RP' or player.get('In_Game_Position') == 'CP':
+    # print('RP/CP')
+    # print("Pitching Clutch:", player.get('Pitching Clutch'))
+    # print("Pitching Clutch Change Avg:", player.get('Pitching Clutch Change Avg', 0))
+    # print("H9 V L:", player.get('H9 V L'))
+    # print("H9 V L Change Avg:", player.get('H9 V L Change Avg', 0))
+    # print("H9 V R:", player.get('H9 V R'))
+    # print("H9 V R Change Avg:", player.get('H9 V R Change Avg', 0))
+    # print("K9 V L:", player.get('K9 V L'))
+    # print("K9 V L Change Avg:", player.get('K9 V L Change Avg', 0))
+    # print("K9 V R:", player.get('K9 V R'))
+    # print("K9 V R Change Avg:", player.get('K9 V R Change Avg', 0))
+    # print("BB Per 9:", player.get('BB Per 9'))
+    # print("BB Per 9 Change Avg:", player.get('BB Per 9 Change Avg', 0))
+    # print("Stamina:", player.get('Stamina'))
+    # print("Stamina Change Avg:", player.get('Stamina Change Avg', 0))
+    old_true_overall = (int(player.get('Pitching Clutch')) / 10) + (int(player.get('H9 V L')) / 7) + (int(player.get('H9 V R')) / 7) + (int(player.get('K9 V L')) / 6.5) + (int(player.get('K9 V R')) / 6.5) + (int(player.get('BB Per 9')) / 4) + (int(player.get('Stamina')) / 25)
+    new_true_overall = ((int(player.get('Pitching Clutch')) + int(player.get('Pitching Clutch Change Avg', 0))) / 10) + ((int(player.get('H9 V L')) + int(player.get('H/9 v L Change Avg', 0))) / 7) + ((int(player.get('H9 V R')) + int(player.get('H/9 v R Change Avg', 0))) / 7) + ((int(player.get('K9 V L')) + int(player.get('K/9 v L Change Avg', 0))) / 6.5) + ((int(player.get('K9 V R')) + int(player.get('K/9 v R Change Avg', 0))) / 6.5) + ((int(player.get('BB Per 9')) + int(player.get('BB/9 Change Avg', 0))) / 4) + ((int(player.get('Stamina')) + int(player.get('Stamina Change Avg', 0))) / 25)
+    print(f"Old True Overall: {old_true_overall}, New True Overall: {new_true_overall}")
+    
+    overall_change_float = (new_true_overall - old_true_overall) * 0.9
+    # print(overall_change_float)
+    overall_change_final = round(overall_change_float, 2)
+    # print(overall_change_final)
+    # time.sleep(5)
+  else:
+    # print('Hitter')
+    user_agents = [
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Safari/605.1.15",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:110.0) Gecko/20100101 Firefox/110.0",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/120.0.0.0",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:115.0) Gecko/20100101 Firefox/115.0",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Safari/605.1.15",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Safari/605.1.15",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:110.0) Gecko/20100101 Firefox/110.0",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Safari/605.1.15",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.2 Safari/601.7.7",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:115.0) Gecko/20100101 Firefox/115.0",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/119.0.0.0",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Edge/118.0.0.0",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/117.0.0.0"
+    ]
+    headers = {
+        "User-Agent": random.choice(user_agents),
+        "Accept": "application/json, text/javascript, */*; q=0.01",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Referer": "https://showzone.gg/",
+        "Connection": "keep-alive",
+        "Sec-Fetch-Dest": "empty",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "same-origin"
+    }
+    session = requests.Session()
+    max_retries = 5
+    for attempt in range(1, max_retries + 1):
+      try:
+        response1 = session.post('https://data.showzone.gg/api/true-overall/calculate', json=player_before_stats, headers=headers)
+        if response1.status_code == 502:
+          print(f"502 Bad Gateway for player {player.get('Original_Name', 'Unknown')} (before stats), attempt {attempt}/{max_retries}")
+          if attempt < max_retries:
+            time.sleep(2)
+            continue
+          else:
+            response1.raise_for_status()
+        response1.raise_for_status()
+        response2 = session.post('https://data.showzone.gg/api/true-overall/calculate', json=player_after_stats, headers=headers)
+        if response2.status_code == 502:
+          print(f"502 Bad Gateway for player {player.get('Original_Name', 'Unknown')} (after stats), attempt {attempt}/{max_retries}")
+          if attempt < max_retries:
+            time.sleep(2)
+            continue
+          else:
+            response2.raise_for_status()
+        response2.raise_for_status()
+        break  # Success, exit retry loop
+      except requests.exceptions.RequestException as e:
+        if (isinstance(e, requests.exceptions.HTTPError) and hasattr(e.response, 'status_code') and e.response is not None and e.response.status_code == 502 and attempt < max_retries):
+          print(f"502 Bad Gateway for player {player.get('Original_Name', 'Unknown')}, attempt {attempt}/{max_retries}")
           time.sleep(2)
           continue
-        else:
-          response1.raise_for_status()
-      response1.raise_for_status()
-      response2 = session.post('https://data.showzone.gg/api/true-overall/calculate', json=player_after_stats, headers=headers)
-      if response2.status_code == 502:
-        print(f"502 Bad Gateway for player {player.get('Original_Name', 'Unknown')} (after stats), attempt {attempt}/{max_retries}")
-        if attempt < max_retries:
-          time.sleep(2)
-          continue
-        else:
-          response2.raise_for_status()
-      response2.raise_for_status()
-      break  # Success, exit retry loop
-    except requests.exceptions.RequestException as e:
-      if (isinstance(e, requests.exceptions.HTTPError) and hasattr(e.response, 'status_code') and e.response is not None and e.response.status_code == 502 and attempt < max_retries):
-        print(f"502 Bad Gateway for player {player.get('Original_Name', 'Unknown')}, attempt {attempt}/{max_retries}")
-        time.sleep(2)
-        continue
-      print(f"Error during True Overall API request for player {player.get('Original_Name', 'Unknown')}: {e}")
-      player['Overall Change'] = None
-      player['Before Stats'] = player_before_stats
-      player['After Stats'] = player_after_stats
-      player['Old True Overall'] = None
-      player['New True Overall'] = None
-      break
-  
-  old_true_overall = float(response1.json().get('True Overall Rating', 0))
-  new_true_overall = float(response2.json().get('True Overall Rating', 0))
-  
-  print(f"Old True Overall: {old_true_overall}, New True Overall: {new_true_overall}")
-  
-  overall_change_float = new_true_overall - old_true_overall
-  overall_change_final = round(overall_change_float, 2)
+        print(f"Error during True Overall API request for player {player.get('Original_Name', 'Unknown')}: {e}")
+        player['Overall Change'] = None
+        player['Before Stats'] = player_before_stats
+        player['After Stats'] = player_after_stats
+        player['Old True Overall'] = None
+        player['New True Overall'] = None
+        break
+    
+    old_true_overall = float(response1.json().get('True Overall Rating', 0))
+    new_true_overall = float(response2.json().get('True Overall Rating', 0))
+    
+    print(f"Old True Overall: {old_true_overall}, New True Overall: {new_true_overall}")
+    
+    overall_change_float = new_true_overall - old_true_overall
+    overall_change_final = round(overall_change_float, 2)
+    time.sleep(2)
   
   # print(overall_change_float, overall_change_final)
   
@@ -829,7 +886,7 @@ for player in predicted_players:
   player['New True Overall'] = new_true_overall
   
   # print(player)
-  time.sleep(2)
+  # time.sleep(2)
   
   # Hitter
   website_sheet_output.append({
@@ -876,13 +933,28 @@ for player in predicted_players:
     'Predicted Batting Clutch': int(player.get('Batting Clutch')) + player.get('Batting Clutch Change Avg', 0),
     'Batting Clutch Change': player.get('Batting Clutch Change Avg', 0),
     'Buy Now Price': f"=XLOOKUP(AU{counter}, Players_Prices!C:C,Players_Prices!K:K)",
-    'Profit': f"=XLOOKUP(E{counter},'Quicksell Prices'!A:A,'Quicksell Prices'!B:B) - AQ{counter}",
+    'Profit': f"=XLOOKUP(E{counter},'Quicksell Prices'!A:A,'Quicksell Prices'!B:B) - AW{counter}",
     'ROI': f"=(AR{counter} / AQ{counter}) * 100",
     'Card Art URL': f'https://cards.theshow.com/mlb26/{player.get("UUID")}-baked-sm.webp',
     'UUID': player.get('UUID'),
-    'Fangraphs_Player_ID': player.get('FanGraphPlayerID')
+    'Fangraphs_Player_ID': player.get('FanGraphPlayerID'),
+    'Sell Now Price': f"=XLOOKUP(AU{counter}, Players_Prices!C:C,Players_Prices!J:J)",
+    'BA vs Left': player.get('BA vs Left'),
+    'BA vs Right': player.get('BA vs Right'),
+    'BA with RISP': player.get('BA with RISP'),
+    'HR per AB vs Left': player.get('HR per AB vs Left'),
+    'HR per AB vs Right': player.get('HR per AB vs Right'),
+    'H/9 vs Left': player.get('H9 vs Left'),
+    'H/9 vs Right': player.get('H9 vs Right'),
+    'K/9 vs Left': player.get('K9 vs Left'),
+    'K/9 vs Right': player.get('K9 vs Right'),
+    'BB/9': player.get('BB9'),
+    'IP Per Game': player.get('InningsGame'),
+    'Opp BA with RISP': player.get('OPP BA W RISP')
   })
   counter += 1
+  # print(website_sheet_output)
+  # time.sleep(100)
 
 
 
