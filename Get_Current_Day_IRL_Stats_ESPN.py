@@ -30,22 +30,52 @@ current_players = []
 
 teams = ['ari', 'ath', 'atl', 'bal', 'bos', 'chc', 'chw', 'cin', 'cle', 'col', 'det', 'hou', 'kc', 'laa', 'lad', 'mia', 'mil', 'min', 'nym', 'nyy', 'phi', 'pit', 'sd', 'sea', 'sf', 'stl', 'tb', 'tex', 'tor', 'wsh']
 
+user_agents = [
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Safari/605.1.15", #5 for 5 on testing
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:110.0) Gecko/20100101 Firefox/110.0", # 5 for 5 on testing
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/120.0.0.0",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:115.0) Gecko/20100101 Firefox/115.0",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Safari/605.1.15",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Safari/605.1.15",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:110.0) Gecko/20100101 Firefox/110.0",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Safari/605.1.15",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.2 Safari/605.1.15",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/601.7.7 (KHTML, like Gecko) Version/9.1.2 Safari/601.7.7",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:115.0) Gecko/20100101 Firefox/115.0",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/119.0.0.0",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Edge/118.0.0.0",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/117.0.0.0"
+]
+
 headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36"
+    "User-Agent": random.choice(user_agents),
+    "Accept": "application/json, text/javascript, */*; q=0.01",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Referer": "https://www.espn.com/mlb/story/_/id/40185033/mlb-depth-charts-all-30-teams",
+    "Connection": "keep-alive",
+    "Sec-Fetch-Dest": "empty",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Site": "same-origin"
 }
 
 ## Loop Depth Chart Pages
 print("Getting Depth Chart Pages")
 
 for team in teams:
+    session = requests.Session()
     url = f'https://www.espn.com/mlb/team/depth/_/name/{team}'
     # print(url)
-    api_call = requests.get(url, headers=headers)
+    api_call = session.get(url, headers=headers)
+    print(f"Made API call to {url} with status code {api_call.status_code}")
+    # time.sleep(50)
     soup = BeautifulSoup(api_call.text, "html.parser")
     team_name_full = soup.find('h1', class_='headline headline__h1 dib').text.strip()
     team_name = team_name_full.split(" Depth Chart")[0]
     # print(f"Team Name: {team_name}")
-    tr_elements = soup.find_all('tr', class_='Table__TR Table__TR--sm Table__even')
+    tr_elements = soup.find_all('tr', class_='Table__TR Table__TR--sm Table__even') ##fine
     for tr in tr_elements:
         if tr.find('span', class_='fw-medium'):
             row_index = tr['data-idx']
@@ -128,7 +158,7 @@ for i in range(30):
     
     i += 1
     url = f"{base_url}{i}/roster"
-    api_call = requests.get(url)
+    api_call = session.get(url, headers=headers)
     api_json = api_call.json()
     
     team = api_json['team']['displayName']
@@ -184,7 +214,7 @@ print("Getting Injuries Pages")
 for team in teams:
     url = f'https://www.espn.com/mlb/team/injuries/_/name/{team}'
     # print(url)
-    api_call = requests.get(url, headers=headers)
+    api_call = session.get(url, headers=headers)
     soup = BeautifulSoup(api_call.text, "html.parser")
     team_name_full = soup.find('h1', class_='headline headline__h1 dib headline__capitalize').text.strip()
     team_name = team_name_full.split(" Injuries")[0]
