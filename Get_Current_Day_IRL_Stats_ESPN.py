@@ -7,6 +7,7 @@ import pytz
 import os
 from datetime import datetime
 from bs4 import BeautifulSoup
+import random
 
 current_year = datetime.now().year
 # print(current_year)
