@@ -32,19 +32,14 @@ current_players = []
 teams = ['ari', 'ath', 'atl', 'bal', 'bos', 'chc', 'chw', 'cin', 'cle', 'col', 'det', 'hou', 'kc', 'laa', 'lad', 'mia', 'mil', 'min', 'nym', 'nyy', 'phi', 'pit', 'sd', 'sea', 'sf', 'stl', 'tb', 'tex', 'tor', 'wsh']
 
 user_agents = [
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Safari/605.1.15", #5 for 5 on testing
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:110.0) Gecko/20100101 Firefox/110.0", # 5 for 5 on testing
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Safari/605.1.15",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:110.0) Gecko/20100101 Firefox/110.0",
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15",
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/120.0.0.0",
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:115.0) Gecko/20100101 Firefox/115.0",
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Safari/605.1.15",
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Safari/605.1.15",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:110.0) Gecko/20100101 Firefox/110.0",
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15",
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Safari/605.1.15",
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.2 Safari/605.1.15",
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/601.7.7 (KHTML, like Gecko) Version/9.1.2 Safari/601.7.7",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:115.0) Gecko/20100101 Firefox/115.0",
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0",
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/119.0.0.0",
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Edge/118.0.0.0",
@@ -68,12 +63,23 @@ print("Getting Depth Chart Pages")
 for team in teams:
     session = requests.Session()
     url = f'https://www.espn.com/mlb/team/depth/_/name/{team}'
-    # print(url)
-    api_call = session.get(url, headers=headers)
-    print(f"Made API call to {url} with status code {api_call.status_code}")
-    # time.sleep(50)
-    soup = BeautifulSoup(api_call.text, "html.parser")
-    team_name_full = soup.find('h1', class_='headline headline__h1 dib').text.strip()
+    max_retries = 3
+    for attempt in range(max_retries):
+        # Rotate User-Agent on every attempt
+        headers["User-Agent"] = random.choice(user_agents)
+        api_call = session.get(url, headers=headers)
+        print(f"Made API call to {url} with status code {api_call.status_code} (attempt {attempt+1}, UA: {headers['User-Agent']})")
+        soup = BeautifulSoup(api_call.text, "html.parser")
+        h1_tag = soup.find('h1', class_='headline headline__h1 dib')
+        if h1_tag is not None:
+            team_name_full = h1_tag.text.strip()
+            break
+        else:
+            print(f"Could not find team name for {team} on attempt {attempt+1}. Retrying with new User-Agent...")
+            time.sleep(2)
+    else:
+        print(f"Failed to get team name for {team} after {max_retries} attempts. Skipping.")
+        continue
     team_name = team_name_full.split(" Depth Chart")[0]
     # print(f"Team Name: {team_name}")
     tr_elements = soup.find_all('tr', class_='Table__TR Table__TR--sm Table__even') ##fine
