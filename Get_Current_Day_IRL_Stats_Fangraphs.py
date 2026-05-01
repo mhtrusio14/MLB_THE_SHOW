@@ -594,9 +594,10 @@ current_irl_stats_fangraphs_sheet = sh.worksheet("Current_IRL_Stats_Fangraphs")
 current_irl_stats_fangraphs_sheet_existing_data = current_irl_stats_fangraphs_sheet.get_all_values()
 headers = current_irl_stats_fangraphs_sheet_existing_data[0] if current_irl_stats_fangraphs_sheet_existing_data else []
 
-# Add a section that deletes all existing data except headers before appending new data
+# Clear all data except the header row before appending new data
 if current_irl_stats_fangraphs_sheet_existing_data and len(current_irl_stats_fangraphs_sheet_existing_data) > 1:
-    current_irl_stats_fangraphs_sheet.delete_rows(2, len(current_irl_stats_fangraphs_sheet_existing_data))
+    # Adjust the range as needed for your sheet's width (A2:X clears columns A-X from row 2 down)
+    current_irl_stats_fangraphs_sheet.batch_clear(["A2:X"])
 
 # append all the data from final_players_list to the google sheet starting from the 2nd column (B) start with the dictionary keys as the headers and then append all of the data
 if final_players_list:
