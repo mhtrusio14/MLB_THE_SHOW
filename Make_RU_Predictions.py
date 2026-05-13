@@ -61,7 +61,7 @@ historical_irl_stats_hitters_sheet = history_sheet.worksheet("Historical_IRL_Sta
 historical_irl_stats_pitchers_sheet = history_sheet.worksheet("Historical_IRL_Stats_Pitchers")
 
 thresholds_sheet = live_sheet.worksheet("Thresholds")
-calculation_sheet = live_sheet.worksheet("Calculations")
+# calculation_sheet = live_sheet.worksheet("Calculations")
 website_output_sheet = live_sheet.worksheet("Website Output")
 
 headers = [re.sub(r'[^A-Za-z0-9 ]+', '', unidecode(h)) for h in current_in_game_stats_sheet.get("B1:AM1")[0]]
