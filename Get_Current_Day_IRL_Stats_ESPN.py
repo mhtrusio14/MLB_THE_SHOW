@@ -46,31 +46,16 @@ user_agents = [
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/117.0.0.0"
 ]
 
-accept_languages = [
-    "en-US,en;q=0.9",
-    "en-GB,en;q=0.8",
-    "en-CA,en;q=0.7",
-    "en-AU,en;q=0.6",
-    "en;q=0.5"
-]
-referers = [
-    "https://www.espn.com/mlb/story/_/id/40185033/mlb-depth-charts-all-30-teams",
-    "https://www.espn.com/mlb/",
-    "https://www.espn.com/",
-    "https://www.google.com/"
-]
-
-def get_random_headers():
-    return {
-        "User-Agent": random.choice(user_agents),
-        "Accept": "application/json, text/javascript, */*; q=0.01",
-        "Accept-Language": random.choice(accept_languages),
-        "Referer": random.choice(referers),
-        "Connection": "keep-alive",
-        "Sec-Fetch-Dest": "empty",
-        "Sec-Fetch-Mode": "cors",
-        "Sec-Fetch-Site": "same-origin"
-    }
+headers = {
+    "User-Agent": random.choice(user_agents),
+    "Accept": "application/json, text/javascript, */*; q=0.01",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Referer": "https://www.espn.com/mlb/story/_/id/40185033/mlb-depth-charts-all-30-teams",
+    "Connection": "keep-alive",
+    "Sec-Fetch-Dest": "empty",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Site": "same-origin"
+}
 
 ## Loop Depth Chart Pages
 print("Getting Depth Chart Pages")
@@ -78,23 +63,12 @@ print("Getting Depth Chart Pages")
 for team in teams:
     session = requests.Session()
     url = f'https://www.espn.com/mlb/team/depth/_/name/{team}'
-    max_retries = 5
-    for attempt in range(max_retries):
-        headers = get_random_headers()
-        api_call = session.get(url, headers=headers)
-        print(f"Made API call to {url} with status code {api_call.status_code} (attempt {attempt+1}, UA: {headers['User-Agent']}, Ref: {headers['Referer']}, Lang: {headers['Accept-Language']})")
-        soup = BeautifulSoup(api_call.text, "html.parser")
-        h1_tag = soup.find('h1', class_='headline headline__h1 dib')
-        if h1_tag is not None:
-            team_name_full = h1_tag.text.strip()
-            break
-        else:
-            wait_time = 2 ** attempt
-            print(f"Could not find team name for {team} on attempt {attempt+1}. Retrying with new headers after {wait_time}s...")
-            time.sleep(wait_time)
-    else:
-        print(f"Failed to get team name for {team} after {max_retries} attempts. Skipping.")
-        continue
+    # print(url)
+    api_call = session.get(url, headers=headers)
+    print(f"Made API call to {url} with status code {api_call.status_code}")
+    # time.sleep(50)
+    soup = BeautifulSoup(api_call.text, "html.parser")
+    team_name_full = soup.find('h1', class_='headline headline__h1 dib').text.strip()
     team_name = team_name_full.split(" Depth Chart")[0]
     # print(f"Team Name: {team_name}")
     tr_elements = soup.find_all('tr', class_='Table__TR Table__TR--sm Table__even') ##fine
@@ -226,7 +200,18 @@ for i in range(30):
                     'H/9': "",
                     'BB/9': "",
                     'K/9': "",
-                    'IP Per Game': ""
+                    'IP Per Game': "",
+                    
+                    'L15 BA': "",
+                    'L15 HR': "",
+                    'L15 OPS': "",
+                    'L15 RBI': "",
+                    
+                    'L15 IP': "",
+                    'L15 Hits Allowed': "",
+                    'L15 Ks': "",
+                    'L15 ERA': "",
+                    'L15 Walks': ""
                 })
 
 
@@ -285,7 +270,18 @@ for team in teams:
                     'H/9': "",
                     'BB/9': "",
                     'K/9': "",
-                    'IP Per Game': ""
+                    'IP Per Game': "",
+                    
+                    'L15 BA': "",
+                    'L15 HR': "",
+                    'L15 OPS': "",
+                    'L15 RBI': "",
+                    
+                    'L15 IP': "",
+                    'L15 Hits Allowed': "",
+                    'L15 Ks': "",
+                    'L15 ERA': "",
+                    'L15 Walks': ""
                 })
 
 print('Finished looping through all teams')
@@ -345,6 +341,26 @@ for player in current_players:
                         player['Walks'] = api_json['splitCategories'][0]['splits'][0]['stats'][13]
                     except (KeyError, IndexError) as e:
                         print(f"KeyError or IndexError: {e} for player {player['Player_Name']} with ID {player['Player_ID']} when getting Walks")
+                    try:
+                        player['L15 IP'] = api_json['splitCategories'][4]['splits'][-2]['stats'][8]
+                    except (KeyError, IndexError) as e:
+                        print(f"KeyError or IndexError: {e} for player {player['Player_Name']} with ID {player['Player_ID']} when getting L15 IP")
+                    try:
+                        player['L15 Hits Allowed'] = api_json['splitCategories'][4]['splits'][-2]['stats'][9]
+                    except (KeyError, IndexError) as e:
+                        print(f"KeyError or IndexError: {e} for player {player['Player_Name']} with ID {player['Player_ID']} when getting L15 Hits Allowed")
+                    try:
+                        player['L15 Ks'] = api_json['splitCategories'][4]['splits'][-2]['stats'][14]
+                    except (KeyError, IndexError) as e:
+                        print(f"KeyError or IndexError: {e} for player {player['Player_Name']} with ID {player['Player_ID']} when getting L15 Ks")
+                    try:
+                        player['L15 ERA'] = api_json['splitCategories'][4]['splits'][-2]['stats'][0]
+                    except (KeyError, IndexError) as e:
+                        print(f"KeyError or IndexError: {e} for player {player['Player_Name']} with ID {player['Player_ID']} when getting L15 ERA")
+                    try:
+                        player['L15 Walks'] = api_json['splitCategories'][4]['splits'][-2]['stats'][13]
+                    except (KeyError, IndexError) as e:
+                        print(f"KeyError or IndexError: {e} for player {player['Player_Name']} with ID {player['Player_ID']} when getting L15 Walks")
             except requests.RequestException as e:
                 print("Error Getting Splits")
                 print(f"RequestException: {e} for player {player['Player_Name']} with ID {player['Player_ID']} when getting splits")
@@ -365,11 +381,11 @@ for player in current_players:
                     except (KeyError, IndexError) as e:
                         print(f"KeyError or IndexError: {e} for player {player['Player_Name']} with ID {player['Player_ID']} when getting At Bats")
                     try:
-                        player['At Bats v LEFT'] = api_json['splitCategories'][1]['splits'][0]['stats'][0]
+                        player['At Bats v LEFT'] = api_json['splitCategories'][1]['splits'][0]['stats'][0] # 65
                     except (KeyError, IndexError) as e:
                         print(f"KeyError or IndexError: {e} for player {player['Player_Name']} with ID {player['Player_ID']} when getting AB v LEFT")
                     try:
-                        player['At Bats v RIGHT'] = api_json['splitCategories'][1]['splits'][1]['stats'][0]
+                        player['At Bats v RIGHT'] = api_json['splitCategories'][1]['splits'][1]['stats'][0] # 108
                     except (KeyError, IndexError) as e:
                         print(f"KeyError or IndexError: {e} for player {player['Player_Name']} with ID {player['Player_ID']} when getting AB v RIGHT")
                     try:
@@ -385,19 +401,19 @@ for player in current_players:
                     except (KeyError, IndexError) as e:
                         print(f"KeyError or IndexError: {e} for player {player['Player_Name']} with ID {player['Player_ID']} when getting BA w RISP")
                     try:
-                        player['HR v LEFT'] = api_json['splitCategories'][1]['splits'][0]['stats'][5]
+                        player['HR v LEFT'] = api_json['splitCategories'][1]['splits'][0]['stats'][5] # 5
                     except (KeyError, IndexError) as e:
                         print(f"KeyError or IndexError: {e} for player {player['Player_Name']} with ID {player['Player_ID']} when getting HR v LEFT")
                     try:
-                        player['HR v RIGHT'] = api_json['splitCategories'][1]['splits'][1]['stats'][5]
+                        player['HR v RIGHT'] = api_json['splitCategories'][1]['splits'][1]['stats'][5] # 6
                     except (KeyError, IndexError) as e:
                         print(f"KeyError or IndexError: {e} for player {player['Player_Name']} with ID {player['Player_ID']} when getting HR v RIGHT")
                     try:
-                        player['BA v LEFT'] = api_json['splitCategories'][1]['splits'][0]['stats'][12]
+                        player['BA v LEFT'] = api_json['splitCategories'][1]['splits'][0]['stats'][12] # .323
                     except (KeyError, IndexError) as e:
                         print(f"KeyError or IndexError: {e} for player {player['Player_Name']} with ID {player['Player_ID']} when getting BA v LEFT")
                     try:
-                        player['BA v RIGHT'] = api_json['splitCategories'][1]['splits'][1]['stats'][12]
+                        player['BA v RIGHT'] = api_json['splitCategories'][1]['splits'][1]['stats'][12] # .278
                     except (KeyError, IndexError) as e:
                         print(f"KeyError or IndexError: {e} for player {player['Player_Name']} with ID {player['Player_ID']} when getting BA v RIGHT")
                     try:
@@ -408,6 +424,22 @@ for player in current_players:
                         player['RBIS'] = api_json['splitCategories'][0]['splits'][0]['stats'][6]
                     except (KeyError, IndexError) as e:
                         print(f"KeyError or IndexError: {e} for player {player['Player_Name']} with ID {player['Player_ID']} when getting RBIS")
+                    try:
+                        player['L15 BA'] = api_json['splitCategories'][2]['splits'][-2]['stats'][12]
+                    except (KeyError, IndexError) as e:
+                        print(f"KeyError or IndexError: {e} for player {player['Player_Name']} with ID {player['Player_ID']} when getting L15 Batting Average")
+                    try:
+                        player['L15 HR'] = api_json['splitCategories'][2]['splits'][-2]['stats'][5]
+                    except (KeyError, IndexError) as e:
+                        print(f"KeyError or IndexError: {e} for player {player['Player_Name']} with ID {player['Player_ID']} when getting L15 Homeruns")
+                    try:
+                        player['L15 OPS'] = api_json['splitCategories'][2]['splits'][-2]['stats'][15]
+                    except (KeyError, IndexError) as e:
+                        print(f"KeyError or IndexError: {e} for player {player['Player_Name']} with ID {player['Player_ID']} when getting L15 OPS")
+                    try:
+                        player['L15 RBI'] = api_json['splitCategories'][2]['splits'][-2]['stats'][6]
+                    except (KeyError, IndexError) as e:
+                        print(f"KeyError or IndexError: {e} for player {player['Player_Name']} with ID {player['Player_ID']} when getting L15 RBI")
             except requests.RequestException as e:
                 print("Error Getting Splits")
                 print(f"RequestException: {e} for player {player['Player_Name']} with ID {player['Player_ID']} when getting splits")
@@ -427,7 +459,7 @@ headers = list(current_players[0].keys())
 
 # Append the player data directly
 for player in current_players:
-    row = [player[key] for key in headers]
+    row = [player.get(key, "") for key in headers]
     data_to_update.append(row)
 
 # Calculate the end column letter
