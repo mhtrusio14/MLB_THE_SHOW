@@ -144,7 +144,17 @@ for team in teams:
                             'H/9': "",
                             'BB/9': "",
                             'K/9': "",
-                            'IP Per Game': ""
+                            'IP Per Game': "",
+                            'L15 BA': "",
+                            'L15 HR': "",
+                            'L15 OPS': "",
+                            'L15 RBI': "",
+                            
+                            'L15 IP': "",
+                            'L15 Hits Allowed': "",
+                            'L15 Ks': "",
+                            'L15 ERA': "",
+                            'L15 Walks': ""
                         })
 
 # Loop Roster Pages
