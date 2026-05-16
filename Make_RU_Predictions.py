@@ -585,7 +585,14 @@ for player in players_w_thresholds:
     predicted_players.append(player)
 
   else:
+    print(player['Name'])
+    # print(player_thresholds.get('Power R', {}).get('in_game_lower', 0))
+    # print(player_thresholds.get('Power R', {}).get('in_game_upper', 0))
+    # print(player_thresholds.get('HR v Right normalized', {}).get('irl_lower', 0))
+    # print(player_thresholds.get('HR v Right normalized', {}).get('irl_upper', 0))
     for entry in historical_hitters:
+      
+      # print(entry)
       
       hist_entry_name = entry.get('Player')
       hist_entry_date = entry.get('Date')
@@ -595,16 +602,22 @@ for player in players_w_thresholds:
       hist_entry_con_l_before = int(entry.get('CON L Before') or 0)
       hist_entry_batting_clutch = int(entry.get('CLT Before') or 0)
       
-      if (player_thresholds.get('Power R', {}).get('in_game_lower', 0) <= hist_entry_pow_r_before <= player_thresholds.get('Power R', {}).get('in_game_upper', 0) and player_thresholds.get('HR v Right normalized', {}).get('irl_lower', 0) <= float(entry.get('HR v Right normalized', 0) or 0) <= player_thresholds.get('HR v Right normalized', {}).get('irl_upper', 0)):
+      # print(float(entry.get('HR per AB vs Left IRL', 0) or 0))
+      # print(float(entry.get('HR per AB vs Right IRL', 0) or 0))
+      # time.sleep(5)
+      
+      if (player_thresholds.get('Power R', {}).get('in_game_lower', 0) <= hist_entry_pow_r_before <= player_thresholds.get('Power R', {}).get('in_game_upper', 0) and player_thresholds.get('HR v Right normalized', {}).get('irl_lower', 0) <= float(entry.get('HR per AB vs Right IRL', 0) or 0) <= player_thresholds.get('HR v Right normalized', {}).get('irl_upper', 0)):
         # print(entry)
         pow_r_change_val = entry.get('POW R Change', 0)
+        # print(f"POW R Comp Found: {hist_entry_name} on {hist_entry_date}: {pow_r_change_val}")
         try:
           power_r_collector.append(int(pow_r_change_val) if pow_r_change_val not in (None, '', 'NA') else 0)
         except ValueError:
           power_r_collector.append(0)
         # print(f"Processed Power R for {hist_entry_name} on {hist_entry_date}: {pow_r_change_val}")
-      if (player_thresholds.get('Power L', {}).get('in_game_lower', 0) <= hist_entry_pow_l_before <= player_thresholds.get('Power L', {}).get('in_game_upper', 0) and player_thresholds.get('HR v Left normalized', {}).get('irl_lower', 0) <= float(entry.get('HR v Left normalized', 0) or 0) <= player_thresholds.get('HR v Left normalized', {}).get('irl_upper', 0)):
+      if (player_thresholds.get('Power L', {}).get('in_game_lower', 0) <= hist_entry_pow_l_before <= player_thresholds.get('Power L', {}).get('in_game_upper', 0) and player_thresholds.get('HR v Left normalized', {}).get('irl_lower', 0) <= float(entry.get('HR per AB vs Left IRL', 0) or 0) <= player_thresholds.get('HR v Left normalized', {}).get('irl_upper', 0)):
         pow_l_change_val = entry.get('POW L Change', 0)
+        # print(f"POW L Comp Found: {hist_entry_name} on {hist_entry_date}: {pow_l_change_val}")
         try:
           power_l_collector.append(int(pow_l_change_val) if pow_l_change_val not in (None, '', 'NA') else 0)
         except ValueError:
@@ -658,6 +671,9 @@ for player in players_w_thresholds:
     # print(player)
     # time.sleep(10)
     predicted_players.append(player)
+    # print(f"Power R Change Avg: {player['Power R Change Avg']}")
+    # print(f"Power L Change Avg: {player['Power L Change Avg']}")
+    # time.sleep(10)
     
 # print(predicted_players)
 
