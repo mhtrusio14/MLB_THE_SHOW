@@ -905,7 +905,7 @@ for player in predicted_players:
   # time.sleep(2)
   
   # Hitter
-  website_sheet_output.append({
+ website_sheet_output.append({
     'Name': player.get('Original_Name'),
     'Team': player['Team'],
     'Position': player['In_Game_Position'],
@@ -949,8 +949,8 @@ for player in predicted_players:
     'Predicted Batting Clutch': int(player.get('Batting Clutch')) + player.get('Batting Clutch Change Avg', 0),
     'Batting Clutch Change': player.get('Batting Clutch Change Avg', 0),
     'Buy Now Price': f"=XLOOKUP(AU{counter}, Players_Prices!C:C,Players_Prices!K:K)",
-    'Profit': f"=XLOOKUP(E{counter},'Quicksell Prices'!A:A,'Quicksell Prices'!B:B) - AW{counter}",
-    'ROI': f"=(AR{counter} / AQ{counter}) * 100",
+    'Profit': f"=XLOOKUP(E{counter},'Quicksell Prices'!A:A,'Quicksell Prices'!B:B) - BJ{counter}", # changed
+    'ROI': f"=(AR{counter} / BJ{counter}) * 100", # changed
     'Card Art URL': f'https://cards.theshow.com/mlb26/{player.get("UUID")}-baked-sm.webp',
     'UUID': player.get('UUID'),
     'Fangraphs_Player_ID': player.get('FanGraphPlayerID'),
@@ -966,7 +966,8 @@ for player in predicted_players:
     'K/9 vs Right': player.get('K9 vs Right'),
     'BB/9': player.get('BB9'),
     'IP Per Game': player.get('InningsGame'),
-    'Opp BA with RISP': player.get('OPP BA W RISP')
+    'Opp BA with RISP': player.get('OPP BA W RISP'),
+    'Buy Price':f"=IF(XLOOKUP(A{counter},Players_Prices!B:B, Players_Prices!J:J) > XLOOKUP(XLOOKUP(A{counter}, Players_Prices!B:B, Players_Prices!F:F),'Quicksell Prices'!A:A, 'Quicksell Prices'!B:B), XLOOKUP(A{counter},Players_Prices!B:B, Players_Prices!J:J), XLOOKUP(XLOOKUP(A{counter}, Players_Prices!B:B, Players_Prices!F:F),'Quicksell Prices'!A:A, 'Quicksell Prices'!B:B))"
   })
   counter += 1
   # print(website_sheet_output)
