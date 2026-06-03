@@ -19,9 +19,9 @@ def post_with_retry(session, url, **kwargs):
     delay = 120  # seconds
     for attempt in range(max_retries):
         response = session.post(url, **kwargs)
-        if response.status_code != 403 and response.status_code != 502:
+        if response.status_code != 403 and response.status_code != 502 and response.status_code != 429:
             return response
-        print(f"403 error encountered. Retry {attempt+1}/{max_retries} after {delay} seconds...")
+        print(f"Error encountered. Retry {attempt+1}/{max_retries} for {url} after {delay} seconds...")
         time.sleep(delay)
         delay += 30
     print("Max retries reached. Returning last response.")
